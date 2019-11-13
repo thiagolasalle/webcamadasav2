@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/templates/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/templates/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		
+		<h:form id="formTabela">
+			<p:dataTable var="funcionario" value="#{funcionarioBean.funcionarios}" 
+			 		rows="10"
+		            paginator="true"
+		            rowsPerPageTemplate="5,10,20" >
+		            
+			    <p:column headerText="Id">
+			        <h:outputText value="#{funcionario.id}" />
+			    </p:column>
+			 
+			    <p:column headerText="Nome">
+			        <h:outputText value="#{funcionario.nome}" />
+			    </p:column>
+			 
+			    <p:column headerText="Matrícula">
+			        <h:outputText value="#{funcionario.matricula}" />
+			    </p:column>
+			 
+			    <p:column headerText="Sexo">
+			        <h:outputText value="#{funcionario.sexo}" />
+			    </p:column>
+			    
+			    <p:column headerText="senha">
+			        <h:outputText value="#{funcionario.senha}" />
+			    </p:column>
+			    
+			    <p:column headerText="*">
+		            
+		            
+		            <p:commandButton value="Editar"	action="#{funcionarioBean.Editar(funcionario)}"
+			    		onclick="PF('dlgEditarFuncionario').show();"
+			    		update=":formEditarFuncionario" />
+		            	
+		           
+		        </p:column> 
+		        
+			</p:dataTable>
+		</h:form>
+		
+		<br />
+		
+		<h:panelGroup id="painelCadastro" rendered="#{!funcionarioBean.editando}" >
+			<h3>Add Funcionario</h3>
+			<h:form>
+				<p>Nome: <p:inputText value="#{funcionarioBean.funcionario.nome}" /></p>
+				<p>Matrícula: <p:inputText value="#{funcionarioBean.funcionario.matricula}" /></p>
+				Sexo: <p:selectOneMenu id="sexo" value="#{funcionarioBean.funcionario.sexo}">
+		            <f:selectItem itemLabel="masculino" itemValue="masculino" />
+		            <f:selectItem itemLabel="feminino" itemValue="feminino" />
+        		</p:selectOneMenu>
+        		
+				
+				
+				
+				<p>Senha: <p:inputText value="#{funcionarioBean.funcionario.senha}" /></p>
+				<p>
+					<p:commandButton value="Add" action="#{funcionarioBean.Adicionar}" 
+						update=":formTabela" />
+						
+					<p:commandButton value="Limpar" action="#{funcionarioBean.Limpar}" />
+				</p>
+			</h:form>
+		</h:panelGroup>
+		
+		<p:dialog header="Editar Funcionario" widgetVar="dlgEditarFuncionario" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formEditarFuncionario" >
+		        
+		        <p:outputPanel id="painelEditarFuncionario" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Id:" />
+		                <h:outputText value="#{funcionarioBean.funcionario.id}" />
+		 
+		                <h:outputText value="Nome" />
+		                <p:inputText value="#{funcionarioBean.funcionario.nome}" />
+		                
+		                <h:outputText value="Matricula" />
+		                <h:outputText value="#{funcionarioBean.funcionario.matricula}" />
+		 
+		 				<p:outputLabel value="sexo" />
+        				<p:selectOneMenu id="console" value="#{funcionarioBean.funcionario.sexo}">
+            				<f:selectItem itemLabel="masculino" itemValue="masculino" />
+            				<f:selectItem itemLabel="feminino" itemValue="feminino" />
+        				</p:selectOneMenu>
+		 
+		                <h:outputText value="Senha" />
+		                <p:inputText value="#{funcionarioBean.funcionario.senha}" />
+		                
+		            </p:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+	
+	</ui:define>
+	
+	<ui:define name="rodape">
+	   <ui:include src="/templates/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

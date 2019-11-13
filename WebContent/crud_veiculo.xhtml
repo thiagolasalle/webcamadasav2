@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/templates/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/templates/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		
+		<h:form id="formTabela">
+			<p:dataTable var="veiculo" value="#{veiculoBean.veiculos}" 
+			 		rows="10"
+		            paginator="true"
+		            rowsPerPageTemplate="5,10,20" >
+		            
+			    <p:column headerText="Id">
+			        <h:outputText value="#{veiculo.id}" />
+			    </p:column>
+			 
+			    <p:column headerText="Marca">
+			        <h:outputText value="#{veiculo.marca}" />
+			    </p:column>
+			 
+			    <p:column headerText="Cor">
+			        <h:outputText value="#{veiculo.cor}" />
+			    </p:column>
+			 
+			    <p:column headerText="placa">
+			        <h:outputText value="#{veiculo.placa}" />
+			    </p:column>
+			    
+			    <p:column headerText="Status">
+			        <h:outputText value="#{veiculo.status}" />
+			    </p:column>
+			    
+			    <p:column headerText="*">
+		            
+		            
+		            <p:commandButton value="Editar"	action="#{veiculoBean.Editar(veiculo)}"
+			    		onclick="PF('dlgEditarVeiculo').show();"
+			    		update=":formEditarVeiculo" />
+		            	
+		           
+		        </p:column> 
+		        
+			</p:dataTable>
+		</h:form>
+		
+		<br />
+		
+		<h:panelGroup id="painelCadastro" rendered="#{!veiculoBean.editando}" >
+			<h3>Add Veiculo</h3>
+			<h:form>
+				<p>Marca: <p:inputText value="#{veiculoBean.veiculo.marca}" /></p>
+				<p>Cor: <p:inputText value="#{veiculoBean.veiculo.cor}" /></p>
+				<p>Placa: <p:inputText value="#{veiculoBean.veiculo.placa}" /></p><br></br>
+				Sexo: <p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
+		            <f:selectItem itemLabel="ativo" itemValue="ativo" />
+		            <f:selectItem itemLabel="desativado" itemValue="desativado" />
+        		</p:selectOneMenu>
+				<p>
+					<p:commandButton value="Add" action="#{veiculoBean.Adicionar}" 
+						update=":formTabela" />
+						
+					<p:commandButton value="Limpar" action="#{veiculoBean.Limpar}" />
+				</p>
+			</h:form>
+		</h:panelGroup>
+		
+		<p:dialog header="Editar Veiculo" widgetVar="dlgEditarVeiculo" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formEditarVeiculo" >
+		        
+		        <p:outputPanel id="painelEditarVeiculo" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Id:" />
+		                <h:outputText value="#{veiculoBean.veiculo.id}" />
+		 
+		                <h:outputText value="Marca: " />
+		                <p:inputText value="#{veiculoBean.veiculo.marca}" />
+		                
+		                <h:outputText value="Cor: " />
+		                <h:outputText value="#{veiculoBean.veiculo.cor}" />
+		 
+		                <h:outputText value="placa" />
+		                <p:inputText value="#{veiculoBean.veiculo.placa}" />
+		 
+		 				<p:outputLabel value="status" />
+        				<p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
+            				<f:selectItem itemLabel="ativo" itemValue="ativo" />
+            				<f:selectItem itemLabel="desativado" itemValue="desativado" />
+        				</p:selectOneMenu>
+		                
+		            </p:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+	
+	</ui:define>
+	
+	<ui:define name="rodape">
+	   <ui:include src="/templates/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

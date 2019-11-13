@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/templates/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/templates/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		
+		<h:form id="formTabela">
+			<p:dataTable var="cliente" value="#{clienteBean.clientes}" 
+			 		rows="10"
+		            paginator="true"
+		            rowsPerPageTemplate="5,10,15" >
+		            
+			    <p:column headerText="Id">
+			        <h:outputText value="#{cliente.id}" />
+			    </p:column>
+			 
+			    <p:column headerText="Nome">
+			        <h:outputText value="#{cliente.nome}" />
+			    </p:column>
+			 
+			    <p:column headerText="CPF">
+			        <h:outputText value="#{cliente.cpf}" />
+			    </p:column>
+			 
+			    <p:column headerText="Endereco">
+			        <h:outputText value="#{cliente.endereco}" />
+			    </p:column>
+			    
+			    <p:column headerText="Sexo">
+			        <h:outputText value="#{cliente.sexo}" />
+			    </p:column>
+			    
+			    <p:column headerText="deficiencia">
+			        <h:outputText value="#{cliente.deficiencia}" />
+			    </p:column>
+			    
+			    <p:column headerText="Idade de Risco">
+			        <h:outputText value="#{cliente.idadeDeRisco}" />
+			    </p:column>
+			    
+			    <p:column headerText="*">
+		            
+		            
+		            <p:commandButton value="Editar"	action="#{clienteBean.Editar(cliente)}"
+			    		onclick="PF('dlgEditarCliente').show();"
+			    		update=":formEditarCliente" />
+		            	
+		           
+		        </p:column> 
+		        
+			</p:dataTable>
+		</h:form>
+		
+		<br />
+		
+		<h:panelGroup id="painelCadastro" rendered="#{!clienteBean.editando}" >
+			<h3>Add Cliente</h3>
+			<h:form>
+				<p>Nome: <p:inputText value="#{clienteBean.cliente.nome}" /></p>
+				<p>CPF: <p:inputText value="#{clienteBean.cliente.cpf}" /></p>
+				<p>Endereço: <p:inputText value="#{clienteBean.cliente.endereco}" /></p>
+				
+				Sexo: <p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
+		            <f:selectItem itemLabel="masculino" itemValue="masculino" />
+		            <f:selectItem itemLabel="feminino" itemValue="feminino" />
+        		</p:selectOneMenu><br></br><br></br>
+        		
+        		Deficiencia: <p:selectOneMenu id="deficiencia" value="#{clienteBean.cliente.deficiencia}">
+		            <f:selectItem itemLabel="sim" itemValue="true" />
+		            <f:selectItem itemLabel="não" itemValue="false" />
+        		</p:selectOneMenu><br></br><br></br>
+        		
+        		Idade de Risco: <p:selectOneMenu id="idadederisco" value="#{clienteBean.cliente.idadeDeRisco}">
+		            <f:selectItem itemLabel="sim" itemValue="true" />
+		            <f:selectItem itemLabel="não" itemValue="false" />
+        		</p:selectOneMenu>
+				
+				<p>
+					<p:commandButton value="Add" action="#{clienteBean.Adicionar}" 
+						update=":formTabela" />
+						
+					<p:commandButton value="Limpar" action="#{clienteBean.Limpar}" />
+				</p>
+			</h:form>
+		</h:panelGroup>
+		
+		<p:dialog header="Editar Cliente" widgetVar="dlgEditarCliente" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formEditarCliente" >
+		        
+		        <p:outputPanel id="painelEditarCliente" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Id:" />
+		                <h:outputText value="#{clienteBean.cliente.id}" />
+		 
+		                <h:outputText value="Nome" />
+		                <p:inputText value="#{clienteBean.cliente.nome}" />
+		                
+		                <h:outputText value="CPF:" />
+		                <h:outputText value="#{clienteBean.cliente.cpf}" />
+		 
+		                <h:outputText value="Endereco" />
+		                <p:inputText value="#{clienteBean.cliente.endereco}" />
+		                
+             			<p:outputLabel value="Sexo" />
+        				<p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
+            				<f:selectItem itemLabel="masculino" itemValue="masculino" />
+            				<f:selectItem itemLabel="feminino" itemValue="feminino" />
+        				</p:selectOneMenu>
+        				
+        				<p:outputLabel value="Deficiencia" />
+        				<p:selectOneMenu id="deficiencia" value="#{clienteBean.cliente.deficiencia}">
+            				<f:selectItem itemLabel="sim" itemValue="true" />
+            				<f:selectItem itemLabel="não" itemValue="false" />
+        				</p:selectOneMenu>
+        				
+        				<p:outputLabel value="Idade de Risco" />
+        				<p:selectOneMenu id="idadederisco" value="#{clienteBean.cliente.idadeDeRisco}">
+            				<f:selectItem itemLabel="sim" itemValue="true" />
+            				<f:selectItem itemLabel="não" itemValue="false" />
+        				</p:selectOneMenu>
+		                
+		            </p:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+	
+	</ui:define>
+	
+	<ui:define name="rodape">
+	   <ui:include src="/templates/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>
