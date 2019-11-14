@@ -15,6 +15,12 @@ public class Locacao implements Serializable {
 	private Pagamento pagamento;
 	private Veiculo veiculo;
 	
+	public Locacao() {
+		this.funcionario = new Funcionario();
+		this.cliente = new Cliente();
+		this.pagamento = new Pagamento();
+		this.veiculo = new Veiculo();
+	}
 	
 	public Locacao(int id, String data_locacao, String data_entrega, String status, Funcionario funcionario, Cliente cliente, Pagamento pagamento, Veiculo veiculo) {
 		super();
@@ -90,6 +96,18 @@ public class Locacao implements Serializable {
 	
 	public void setVeiculo(Veiculo veiculo) {
 		this.veiculo = veiculo;
+	}
+	
+	public void restaurarLocacao(Locacao _locacao) {
+		this.id = _locacao.id;
+		this.data_locacao = _locacao.data_locacao;
+		this.data_entrega = _locacao.data_entrega;
+		this.status = _locacao.status;
+	}	
+	
+	@Override
+	public Locacao clone() {
+		return new Locacao(this.id, this.data_locacao, this.data_entrega, this.status, this.funcionario, this.cliente, this.pagamento, this.veiculo);
 	}
 	
 	@Override

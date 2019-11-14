@@ -152,7 +152,6 @@ public class LocacaoDAO implements LocacaoInDAO {
 			
 			funcionario.getLocacoes().add(p);
 			cliente.getLocacoes().add(p);
-			pagamento.setLocacao(p);
 			veiculo.getLocacoes().add(p);
 		}
 		

@@ -9,14 +9,15 @@ public class Pagamento implements Serializable {
 	private int id;
 	private float valor;
 	private String forma_pagamento;
-	private Locacao locacao;
 	
-	public Pagamento(int id, float valor, String forma_pagamento, Locacao locacao) {
+	public Pagamento() {
+	}
+	
+	public Pagamento(int id, float valor, String forma_pagamento) {
 		super();
 		this.id = id;
 		this.valor = valor;
 		this.forma_pagamento = forma_pagamento;
-		this.setLocacao(locacao);
 	}
 
 	public int getId() {
@@ -41,14 +42,6 @@ public class Pagamento implements Serializable {
 	
 	public void setFormaPagamento(String forma_pagamento) {
 		this.forma_pagamento = forma_pagamento;
-	}
-	
-	public Locacao getLocacao() {
-		return locacao;
-	}
-
-	public void setLocacao(Locacao locacao) {
-		this.locacao = locacao;
 	}
 		
 	@Override
