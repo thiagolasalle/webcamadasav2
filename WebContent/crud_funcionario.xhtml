@@ -20,10 +20,11 @@
 	<ui:define name="conteudo">
 		
 		<h:form id="formTabela">
-			<p:dataTable var="funcionario" value="#{funcionarioBean.funcionarios}" 
+			<p:dataTable id="tabelaFuncionarios" var="funcionario" value="#{funcionarioBean.funcionarios}" 
 			 		rows="10"
 		            paginator="true"
-		            rowsPerPageTemplate="5,10,20" >
+		            rowsPerPageTemplate="5,10,15" 
+		            emptyMessage="Nenhuma funcionario cadastrada no banco de dados" >
 		            
 			    <p:column headerText="Id">
 			        <h:outputText value="#{funcionario.id}" />
@@ -33,7 +34,7 @@
 			        <h:outputText value="#{funcionario.nome}" />
 			    </p:column>
 			 
-			    <p:column headerText="Matrícula">
+			    <p:column headerText="CMatricula">
 			        <h:outputText value="#{funcionario.matricula}" />
 			    </p:column>
 			 
@@ -41,7 +42,7 @@
 			        <h:outputText value="#{funcionario.sexo}" />
 			    </p:column>
 			    
-			    <p:column headerText="senha">
+			    <p:column headerText="Senha">
 			        <h:outputText value="#{funcionario.senha}" />
 			    </p:column>
 			    
@@ -52,36 +53,65 @@
 			    		onclick="PF('dlgEditarFuncionario').show();"
 			    		update=":formEditarFuncionario" />
 		            	
-		           
-		        </p:column> 
+		            <p:commandButton icon="ui-icon-trash" actionListener="#{funcionarioBean.PrepararExcluir}"
+		            	value="Excluir" 
+		            	onclick="PF('dlgExcluirFuncionario').show();" />
+			    		
+		        </p:column>
+		        
+		        <f:facet name="footer">
+			    	<p:commandButton value="Novo Funcionario" actionListener="#{funcionarioBean.Limpar()}" 
+			    	oncomplete="PF('dlgCadastrarFuncionario').show();"
+			    	update=":fCadastrar:pgCadastrar" />
+			    </f:facet>
 		        
 			</p:dataTable>
 		</h:form>
 		
 		<br />
 		
-		<h:panelGroup id="painelCadastro" rendered="#{!funcionarioBean.editando}" >
-			<h3>Add Funcionario</h3>
-			<h:form>
-				<p>Nome: <p:inputText value="#{funcionarioBean.funcionario.nome}" /></p>
-				<p>Matrícula: <p:inputText value="#{funcionarioBean.funcionario.matricula}" /></p>
-				Sexo: <p:selectOneMenu id="sexo" value="#{funcionarioBean.funcionario.sexo}">
-		            <f:selectItem itemLabel="masculino" itemValue="masculino" />
-		            <f:selectItem itemLabel="feminino" itemValue="feminino" />
-        		</p:selectOneMenu>
-        		
+			
+		<p:dialog header="Cadastrar Funcionario" widgetVar="dlgCadastrarFuncionario" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="fCadastrar" >
+		        
+		        <p:outputPanel id="painelEditarFuncionario" style="text-align:center;">
+		            
+		            <p:panelGrid id="pgCadastrar" columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Nome" />
+		                <p:inputText value="#{funcionarioBean.funcionario.nome}" />
+		 
+		                <h:outputText value="Matricula" />
+		                <p:inputText value="#{funcionarioBean.funcionario.matricula}" />
+		 
+		                <p:outputLabel value="sexo" />
+        				<p:selectOneMenu id="console" value="#{funcionarioBean.funcionario.sexo}">
+            				<f:selectItem itemLabel="masculino" itemValue="masculino" />
+            				<f:selectItem itemLabel="feminino" itemValue="feminino" />
+        				</p:selectOneMenu>
+		                
+		                <h:outputText value="Senha" />
+		                <p:inputText value="#{funcionarioBean.funcionario.senha}" />
+		                
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
 				
-				
-				
-				<p>Senha: <p:inputText value="#{funcionarioBean.funcionario.senha}" /></p>
-				<p>
-					<p:commandButton value="Add" action="#{funcionarioBean.Adicionar}" 
-						update=":formTabela" />
-						
-					<p:commandButton value="Limpar" action="#{funcionarioBean.Limpar}" />
-				</p>
-			</h:form>
-		</h:panelGroup>
+						<p:commandButton value="Cadastrar" oncomplete="PF('dlgCadastrarFuncionario').hide();" 
+							actionListener="#{funcionarioBean.Adicionar()}" 
+							update=":formTabela:tabelaFuncionarios :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgCadastrarFuncionario').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
 		
 		<p:dialog header="Editar Funcionario" widgetVar="dlgEditarFuncionario" modal="true"
 			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
@@ -92,25 +122,65 @@
 		            
 		            <p:panelGrid  columns="2" columnClasses="label,value">
 		               
+		                <h:outputText value="Barcode" />
+    					<p:barcode value="#{funcionarioBean.funcionario.matricula}" type="code39"/>
+               
 		                <h:outputText value="Id:" />
 		                <h:outputText value="#{funcionarioBean.funcionario.id}" />
 		 
 		                <h:outputText value="Nome" />
 		                <p:inputText value="#{funcionarioBean.funcionario.nome}" />
-		                
-		                <h:outputText value="Matricula" />
-		                <h:outputText value="#{funcionarioBean.funcionario.matricula}" />
 		 
-		 				<p:outputLabel value="sexo" />
+		                <h:outputText value="Matricula" />
+		                <p:inputText value="#{funcionarioBean.funcionario.matricula}" />
+		 
+		                <p:outputLabel value="sexo" />
         				<p:selectOneMenu id="console" value="#{funcionarioBean.funcionario.sexo}">
             				<f:selectItem itemLabel="masculino" itemValue="masculino" />
             				<f:selectItem itemLabel="feminino" itemValue="feminino" />
         				</p:selectOneMenu>
-		 
-		                <h:outputText value="Senha" />
+        				
+        				<h:outputText value="Senha" />
 		                <p:inputText value="#{funcionarioBean.funcionario.senha}" />
-		                
+		                		                
 		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Salvar Edição" oncomplete="PF('dlgEditarFuncionario').hide();" 
+							actionListener="#{funcionarioBean.SalvarEdicao()}" 
+							update=":formTabela:tabelaFuncionarios :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgEditarFuncionario').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+    	
+    	<p:dialog id="dlgEx" header="Excluir Funcionario" widgetVar="dlgExcluirFuncionario" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formExcluirFuncionario" >
+		        
+		        <p:outputPanel id="painelEditarFuncionario" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Excluir" oncomplete="PF('dlgExcluirFuncionario').hide();" 
+							actionListener="#{funcionarioBean.Excluir()}" 
+							update=":formTabela:tabelaFuncionarios :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgExcluirFuncionario').hide();" />
+					
+					</h:panelGrid>
 		            
 		        </p:outputPanel>
 		        
@@ -118,6 +188,7 @@
 	        
     	</p:dialog>
 	
+		
 	</ui:define>
 	
 	<ui:define name="rodape">

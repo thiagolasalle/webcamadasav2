@@ -20,10 +20,11 @@
 	<ui:define name="conteudo">
 		
 		<h:form id="formTabela">
-			<p:dataTable var="cliente" value="#{clienteBean.clientes}" 
+			<p:dataTable id="tabelaClientes" var="cliente" value="#{clienteBean.clientes}" 
 			 		rows="10"
 		            paginator="true"
-		            rowsPerPageTemplate="5,10,15" >
+		            rowsPerPageTemplate="5,10,15" 
+		            emptyMessage="Nenhuma cliente cadastrada no banco de dados" >
 		            
 			    <p:column headerText="Id">
 			        <h:outputText value="#{cliente.id}" />
@@ -45,7 +46,7 @@
 			        <h:outputText value="#{cliente.sexo}" />
 			    </p:column>
 			    
-			    <p:column headerText="deficiencia">
+			    <p:column headerText="Deficiencia">
 			        <h:outputText value="#{cliente.deficiencia}" />
 			    </p:column>
 			    
@@ -60,22 +61,43 @@
 			    		onclick="PF('dlgEditarCliente').show();"
 			    		update=":formEditarCliente" />
 		            	
-		           
-		        </p:column> 
+		            <p:commandButton icon="ui-icon-trash" actionListener="#{clienteBean.PrepararExcluir}"
+		            	value="Excluir" 
+		            	onclick="PF('dlgExcluirCliente').show();" />
+			    		
+		        </p:column>
+		        
+		        <f:facet name="footer">
+			    	<p:commandButton value="Nova Cliente" actionListener="#{clienteBean.Limpar()}" 
+			    	oncomplete="PF('dlgCadastrarCliente').show();"
+			    	update=":fCadastrar:pgCadastrar" />
+			    </f:facet>
 		        
 			</p:dataTable>
 		</h:form>
 		
 		<br />
 		
-		<h:panelGroup id="painelCadastro" rendered="#{!clienteBean.editando}" >
-			<h3>Add Cliente</h3>
-			<h:form>
-				<p>Nome: <p:inputText value="#{clienteBean.cliente.nome}" /></p>
-				<p>CPF: <p:inputText value="#{clienteBean.cliente.cpf}" /></p>
-				<p>Endereço: <p:inputText value="#{clienteBean.cliente.endereco}" /></p>
-				
-				Sexo: <p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
+			
+		<p:dialog header="Cadastrar Cliente" widgetVar="dlgCadastrarCliente" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="fCadastrar" >
+		        
+		        <p:outputPanel id="painelEditarCliente" style="text-align:center;">
+		            
+		            <p:panelGrid id="pgCadastrar" columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Nome" />
+		                <p:inputText value="#{clienteBean.cliente.nome}" />
+		 
+		                <h:outputText value="CPF" />
+		                <p:inputText value="#{clienteBean.cliente.cpf}" />
+		 
+		                <h:outputText value="Endereco" />
+		                <p:inputText value="#{clienteBean.cliente.endereco}" />
+		                
+		                Sexo: <p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
 		            <f:selectItem itemLabel="masculino" itemValue="masculino" />
 		            <f:selectItem itemLabel="feminino" itemValue="feminino" />
         		</p:selectOneMenu><br></br><br></br>
@@ -89,15 +111,24 @@
 		            <f:selectItem itemLabel="sim" itemValue="true" />
 		            <f:selectItem itemLabel="não" itemValue="false" />
         		</p:selectOneMenu>
+		                
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
 				
-				<p>
-					<p:commandButton value="Add" action="#{clienteBean.Adicionar}" 
-						update=":formTabela" />
-						
-					<p:commandButton value="Limpar" action="#{clienteBean.Limpar}" />
-				</p>
-			</h:form>
-		</h:panelGroup>
+						<p:commandButton value="Cadastrar" oncomplete="PF('dlgCadastrarCliente').hide();" 
+							actionListener="#{clienteBean.Adicionar()}" 
+							update=":formTabela:tabelaClientes :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgCadastrarCliente').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
 		
 		<p:dialog header="Editar Cliente" widgetVar="dlgEditarCliente" modal="true"
 			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
@@ -113,32 +144,66 @@
 		 
 		                <h:outputText value="Nome" />
 		                <p:inputText value="#{clienteBean.cliente.nome}" />
-		                
-		                <h:outputText value="CPF:" />
-		                <h:outputText value="#{clienteBean.cliente.cpf}" />
 		 
-		                <h:outputText value="Endereco" />
+		                <h:outputText value="CPF" />
+		                <p:inputText value="#{clienteBean.cliente.cpf}" />
+		 
+		                <h:outputText value="Endereço" />
 		                <p:inputText value="#{clienteBean.cliente.endereco}" />
 		                
-             			<p:outputLabel value="Sexo" />
-        				<p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
-            				<f:selectItem itemLabel="masculino" itemValue="masculino" />
-            				<f:selectItem itemLabel="feminino" itemValue="feminino" />
-        				</p:selectOneMenu>
-        				
-        				<p:outputLabel value="Deficiencia" />
-        				<p:selectOneMenu id="deficiencia" value="#{clienteBean.cliente.deficiencia}">
-            				<f:selectItem itemLabel="sim" itemValue="true" />
-            				<f:selectItem itemLabel="não" itemValue="false" />
-        				</p:selectOneMenu>
-        				
-        				<p:outputLabel value="Idade de Risco" />
-        				<p:selectOneMenu id="idadederisco" value="#{clienteBean.cliente.idadeDeRisco}">
-            				<f:selectItem itemLabel="sim" itemValue="true" />
-            				<f:selectItem itemLabel="não" itemValue="false" />
-        				</p:selectOneMenu>
-		                
+		                Sexo: <p:selectOneMenu id="sexo" value="#{clienteBean.cliente.sexo}">
+		            <f:selectItem itemLabel="masculino" itemValue="masculino" />
+		            <f:selectItem itemLabel="feminino" itemValue="feminino" />
+        		</p:selectOneMenu><br></br><br></br>
+        		
+        		Deficiencia: <p:selectOneMenu id="deficiencia" value="#{clienteBean.cliente.deficiencia}">
+		            <f:selectItem itemLabel="sim" itemValue="true" />
+		            <f:selectItem itemLabel="não" itemValue="false" />
+        		</p:selectOneMenu><br></br><br></br>
+        		
+        		Idade de Risco: <p:selectOneMenu id="idadederisco" value="#{clienteBean.cliente.idadeDeRisco}">
+		            <f:selectItem itemLabel="sim" itemValue="true" />
+		            <f:selectItem itemLabel="não" itemValue="false" />
+        		</p:selectOneMenu>
+		                		                
 		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Salvar Edição" oncomplete="PF('dlgEditarCliente').hide();" 
+							actionListener="#{clienteBean.SalvarEdicao()}" 
+							update=":formTabela:tabelaClientes :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgEditarCliente').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+    	
+    	<p:dialog id="dlgEx" header="Excluir Cliente" widgetVar="dlgExcluirCliente" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formExcluirCliente" >
+		        
+		        <p:outputPanel id="painelEditarCliente" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Excluir" oncomplete="PF('dlgExcluirCliente').hide();" 
+							actionListener="#{clienteBean.Excluir()}" 
+							update=":formTabela:tabelaClientes :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgExcluirCliente').hide();" />
+					
+					</h:panelGrid>
 		            
 		        </p:outputPanel>
 		        
@@ -146,6 +211,7 @@
 	        
     	</p:dialog>
 	
+		
 	</ui:define>
 	
 	<ui:define name="rodape">

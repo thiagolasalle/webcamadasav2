@@ -8,10 +8,14 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.ListDataModel;
 
 import dao.VeiculoDAO;
+import dao.VeiculoDAO;
+import model.Veiculo;
 import model.Veiculo;
 import util.FabricaConexao;
+import util.JSFUtil;
 
 @ManagedBean
 @ViewScoped
@@ -19,13 +23,13 @@ public class VeiculoBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Veiculo veiculo;
-	private List<Veiculo> veiculos;
+	private ListDataModel<Veiculo> veiculos;
 	private Boolean editando;
 	private Veiculo veiculoAntesDaEdicao;
 	
 	public VeiculoBean() {
 		this.veiculo = new Veiculo();
-		this.veiculos = new ArrayList<Veiculo>();
+		this.veiculos = new ListDataModel<Veiculo>();
 		this.editando = false;
 	}
 	
@@ -37,11 +41,11 @@ public class VeiculoBean implements Serializable {
 		this.veiculo = veiculo;
 	}
 
-	public List<Veiculo> getVeiculos() {
+	public ListDataModel<Veiculo> getVeiculos() {
 		return veiculos;
 	}
 
-	public void setVeiculos(List<Veiculo> veiculos) {
+	public void setVeiculos(ListDataModel<Veiculo> veiculos) {
 		this.veiculos = veiculos;
 	}
 	
@@ -74,6 +78,20 @@ public class VeiculoBean implements Serializable {
 	//------------ OPERAÇÕES COM A BASE DE DADOS
 	
 	public void SalvarEdicao() {
+		//DAO
+		try {
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+			
+			VeiculoDAO dao = new VeiculoDAO(conexao);
+			
+			dao.Atualizar(this.veiculo);
+			
+			JSFUtil.adicionarMensagemSucesso("Veiculo alterada com sucesso!");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.veiculo = new Veiculo();
 		this.editando = false;
 	}
@@ -89,12 +107,40 @@ public class VeiculoBean implements Serializable {
 			dao.Inserir(this.veiculo);
 			
 			List<Veiculo> listaVeiculos = dao.listarTodos();
-			this.veiculos = listaVeiculos;
+			this.veiculos = new ListDataModel<Veiculo>(listaVeiculos);
 			
 			this.veiculo = new Veiculo();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void PrepararExcluir() 
+	{
+		this.veiculo = this.veiculos.getRowData();
+	}
+	
+	public void Excluir() {
+		try {
+			
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+			
+			VeiculoDAO dao = new VeiculoDAO(conexao);
+			
+			dao.Excluir(this.veiculo.getId());
+			
+			ListDataModel<Veiculo> listaVeiculos = new ListDataModel<>(dao.listarTodos());
+			this.veiculos = listaVeiculos;
+			
+			this.veiculo = new Veiculo();
+			
+			JSFUtil.adicionarMensagemSucesso("Veiculo excluída com sucesso!");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
 		}
 	}
 	
@@ -107,7 +153,7 @@ public class VeiculoBean implements Serializable {
 			
 			VeiculoDAO dao = new VeiculoDAO(conexao);
 			
-			this.veiculos = dao.listarTodos();
+			this.veiculos = new ListDataModel<Veiculo>(dao.listarTodos());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

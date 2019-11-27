@@ -8,10 +8,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.ListDataModel;
 
 import dao.ClienteDAO;
 import model.Cliente;
 import util.FabricaConexao;
+
+import util.JSFUtil;
 
 @ManagedBean
 @ViewScoped
@@ -19,13 +22,13 @@ public class ClienteBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Cliente cliente;
-	private List<Cliente> clientes;
+	private ListDataModel<Cliente> clientes;
 	private Boolean editando;
 	private Cliente clienteAntesDaEdicao;
 	
 	public ClienteBean() {
 		this.cliente = new Cliente();
-		this.clientes = new ArrayList<Cliente>();
+		this.clientes = new ListDataModel<Cliente>();
 		this.editando = false;
 	}
 	
@@ -37,11 +40,11 @@ public class ClienteBean implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public List<Cliente> getClientes() {
+	public ListDataModel<Cliente> getClientes() {
 		return clientes;
 	}
 
-	public void setClientes(List<Cliente> clientes) {
+	public void setClientes(ListDataModel<Cliente> clientes) {
 		this.clientes = clientes;
 	}
 	
@@ -74,6 +77,20 @@ public class ClienteBean implements Serializable {
 	//------------ OPERAÇÕES COM A BASE DE DADOS
 	
 	public void SalvarEdicao() {
+		//DAO
+		try {
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+			
+			ClienteDAO dao = new ClienteDAO(conexao);
+			
+			dao.Atualizar(this.cliente);
+			
+			JSFUtil.adicionarMensagemSucesso("Cliente alterada com sucesso!");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.cliente = new Cliente();
 		this.editando = false;
 	}
@@ -89,12 +106,40 @@ public class ClienteBean implements Serializable {
 			dao.Inserir(this.cliente);
 			
 			List<Cliente> listaClientes = dao.listarTodos();
-			this.clientes = listaClientes;
+			this.clientes = new ListDataModel<Cliente>(listaClientes);
 			
 			this.cliente = new Cliente();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void PrepararExcluir() 
+	{
+		this.cliente = this.clientes.getRowData();
+	}
+	
+	public void Excluir() {
+		try {
+			
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+			
+			ClienteDAO dao = new ClienteDAO(conexao);
+			
+			dao.Excluir(this.cliente.getId());
+			
+			ListDataModel<Cliente> listaClientes = new ListDataModel<>(dao.listarTodos());
+			this.clientes = listaClientes;
+			
+			this.cliente = new Cliente();
+			
+			JSFUtil.adicionarMensagemSucesso("Cliente excluída com sucesso!");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
 		}
 	}
 	
@@ -107,7 +152,7 @@ public class ClienteBean implements Serializable {
 			
 			ClienteDAO dao = new ClienteDAO(conexao);
 			
-			this.clientes = dao.listarTodos();
+			this.clientes = new ListDataModel<Cliente>(dao.listarTodos());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

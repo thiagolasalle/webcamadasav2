@@ -20,10 +20,11 @@
 	<ui:define name="conteudo">
 		
 		<h:form id="formTabela">
-			<p:dataTable var="veiculo" value="#{veiculoBean.veiculos}" 
+			<p:dataTable id="tabelaVeiculos" var="veiculo" value="#{veiculoBean.veiculos}" 
 			 		rows="10"
 		            paginator="true"
-		            rowsPerPageTemplate="5,10,20" >
+		            rowsPerPageTemplate="5,10,15" 
+		            emptyMessage="Nenhuma veiculo cadastrada no banco de dados" >
 		            
 			    <p:column headerText="Id">
 			        <h:outputText value="#{veiculo.id}" />
@@ -37,7 +38,7 @@
 			        <h:outputText value="#{veiculo.cor}" />
 			    </p:column>
 			 
-			    <p:column headerText="placa">
+			    <p:column headerText="Placa">
 			        <h:outputText value="#{veiculo.placa}" />
 			    </p:column>
 			    
@@ -51,33 +52,65 @@
 		            <p:commandButton value="Editar"	action="#{veiculoBean.Editar(veiculo)}"
 			    		onclick="PF('dlgEditarVeiculo').show();"
 			    		update=":formEditarVeiculo" />
-		   
-		           
-		        </p:column> 
+		            	
+		            <p:commandButton icon="ui-icon-trash" actionListener="#{veiculoBean.PrepararExcluir}"
+		            	value="Excluir" 
+		            	onclick="PF('dlgExcluirVeiculo').show();" />
+			    		
+		        </p:column>
+		        
+		        <f:facet name="footer">
+			    	<p:commandButton value="Nova Veiculo" actionListener="#{veiculoBean.Limpar()}" 
+			    	oncomplete="PF('dlgCadastrarVeiculo').show();"
+			    	update=":fCadastrar:pgCadastrar" />
+			    </f:facet>
 		        
 			</p:dataTable>
 		</h:form>
 		
 		<br />
 		
-		<h:panelGroup id="painelCadastro" rendered="#{!veiculoBean.editando}" >
-			<h3>Add Veiculo</h3>
-			<h:form>
-				<p>Marca: <p:inputText value="#{veiculoBean.veiculo.marca}" /></p>
-				<p>Cor: <p:inputText value="#{veiculoBean.veiculo.cor}" /></p>
-				<p>Placa: <p:inputText value="#{veiculoBean.veiculo.placa}" /></p><br></br>
-				Status: <p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
+			
+		<p:dialog header="Cadastrar Veiculo" widgetVar="dlgCadastrarVeiculo" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="fCadastrar" >
+		        
+		        <p:outputPanel id="painelEditarVeiculo" style="text-align:center;">
+		            
+		            <p:panelGrid id="pgCadastrar" columns="2" columnClasses="label,value">
+		               
+		                <h:outputText value="Marca" />
+		                <p:inputText value="#{veiculoBean.veiculo.marca}" />
+		 
+		                <h:outputText value="Cor" />
+		                <p:inputText value="#{veiculoBean.veiculo.cor}" />
+		 
+		                <h:outputText value="Placa" />
+		                <p:inputText value="#{veiculoBean.veiculo.placa}" />
+		                
+		                Status: <p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
 		            <f:selectItem itemLabel="ativo" itemValue="ativo" />
 		            <f:selectItem itemLabel="desativado" itemValue="desativado" />
         		</p:selectOneMenu>
-				<p>
-					<p:commandButton value="Add" action="#{veiculoBean.Adicionar}" 
-						update=":formTabela" />
-						
-					<p:commandButton value="Limpar" action="#{veiculoBean.Limpar}" />
-				</p>
-			</h:form>
-		</h:panelGroup>
+				                
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Cadastrar" oncomplete="PF('dlgCadastrarVeiculo').hide();" 
+							actionListener="#{veiculoBean.Adicionar()}" 
+							update=":formTabela:tabelaVeiculos :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgCadastrarVeiculo').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
 		
 		<p:dialog header="Editar Veiculo" widgetVar="dlgEditarVeiculo" modal="true"
 			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
@@ -91,22 +124,58 @@
 		                <h:outputText value="Id:" />
 		                <h:outputText value="#{veiculoBean.veiculo.id}" />
 		 
-		                <h:outputText value="Marca: " />
+		                <h:outputText value="Marca" />
 		                <p:inputText value="#{veiculoBean.veiculo.marca}" />
-		                
-		                <h:outputText value="Cor: " />
-		                <h:outputText value="#{veiculoBean.veiculo.cor}" />
 		 
-		                <h:outputText value="placa" />
+		                <h:outputText value="Cor" />
+		                <p:inputText value="#{veiculoBean.veiculo.cor}" />
+		 
+		                <h:outputText value="Placa" />
 		                <p:inputText value="#{veiculoBean.veiculo.placa}" />
-		 
-		 				<p:outputLabel value="status" />
-        				<p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
-            				<f:selectItem itemLabel="ativo" itemValue="ativo" />
-            				<f:selectItem itemLabel="desativado" itemValue="desativado" />
-        				</p:selectOneMenu>
 		                
+		                Status: <p:selectOneMenu id="status" value="#{veiculoBean.veiculo.status}">
+		            <f:selectItem itemLabel="ativo" itemValue="ativo" />
+		            <f:selectItem itemLabel="desativado" itemValue="desativado" />
+        		</p:selectOneMenu>
+		                		                
 		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Salvar Edição" oncomplete="PF('dlgEditarVeiculo').hide();" 
+							actionListener="#{veiculoBean.SalvarEdicao()}" 
+							update=":formTabela:tabelaVeiculos :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgEditarVeiculo').hide();" />
+					
+					</h:panelGrid>
+		            
+		        </p:outputPanel>
+		        
+	        </h:form>
+	        
+    	</p:dialog>
+    	
+    	<p:dialog id="dlgEx" header="Excluir Veiculo" widgetVar="dlgExcluirVeiculo" modal="true"
+			showEffect="blind" hideEffect="explode" resizable="false" appendTo="@(body)">
+	       
+	        <h:form id="formExcluirVeiculo" >
+		        
+		        <p:outputPanel id="painelEditarVeiculo" style="text-align:center;">
+		            
+		            <p:panelGrid  columns="2" columnClasses="label,value">
+		               
+		            </p:panelGrid>
+		            
+		            <h:panelGrid columns="2">
+				
+						<p:commandButton value="Excluir" oncomplete="PF('dlgExcluirVeiculo').hide();" 
+							actionListener="#{veiculoBean.Excluir()}" 
+							update=":formTabela:tabelaVeiculos :msgGlobal"/>
+					
+						<p:commandButton value="Cancel" onclick="PF('dlgExcluirVeiculo').hide();" />
+					
+					</h:panelGrid>
 		            
 		        </p:outputPanel>
 		        
@@ -114,6 +183,7 @@
 	        
     	</p:dialog>
 	
+		
 	</ui:define>
 	
 	<ui:define name="rodape">

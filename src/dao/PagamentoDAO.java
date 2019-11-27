@@ -20,13 +20,12 @@ public class PagamentoDAO implements PagamentoInDAO {
 	@Override
 	public void Inserir(Pagamento _objeto) throws SQLException {
 		
-		String SQL = "INSERT INTO apgamento (valor, forma_pagamento, locacao_id) VALUES (?, ?, ?)";
+		String SQL = "INSERT INTO apgamento (valor, forma_pagamento) VALUES (?, ?, ?)";
 		
 		PreparedStatement ps = this.conexao.prepareStatement(SQL);
 		
 		ps.setFloat(1, _objeto.getValor());
 		ps.setString(2, _objeto.getFormaPagamento());
-		ps.setInt(3, _objeto.getLocacao().getId());
 		
 		ps.execute();
 
@@ -50,7 +49,7 @@ public class PagamentoDAO implements PagamentoInDAO {
 			Float valor = rs.getFloat(2);
 			String forma_pagamento = rs.getString(3);
 			
-			Pagamento p = new Pagamento(id, valor, forma_pagamento, null);
+			Pagamento p = new Pagamento(id, valor, forma_pagamento);
 			
 			pagamentos.add(p);
 		}
@@ -105,7 +104,7 @@ public class PagamentoDAO implements PagamentoInDAO {
 			Float valor = rs.getFloat(2);
 			String forma_pagamento = rs.getString(3);
 			
-			p = new Pagamento(id, valor, forma_pagamento, null);
+			p = new Pagamento(id, valor, forma_pagamento);
 		}
 		
 		return p;
